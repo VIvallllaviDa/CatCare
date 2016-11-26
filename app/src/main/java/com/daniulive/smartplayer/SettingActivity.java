@@ -79,7 +79,7 @@ public class SettingActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                Intent intent = new Intent(SettingActivity.this, VideoActivity.class);
+                Intent intent = new Intent(SettingActivity.this,GuestureActivity .class);
                 startActivity(intent);
             }
         });
