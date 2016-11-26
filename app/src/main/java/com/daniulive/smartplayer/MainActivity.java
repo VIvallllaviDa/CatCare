@@ -30,8 +30,8 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
-        button0 = (Button)findViewById(button_care);
-        button1 = (Button)findViewById(button_watch);
+        button0 = (Button)findViewById(button_watch);
+        button1 = (Button)findViewById(button_care);
         button2 = (Button)findViewById(button_setting);
 
         button0.setOnClickListener(new OnClickListener() {
