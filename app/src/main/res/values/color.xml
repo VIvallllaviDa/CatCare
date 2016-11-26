@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   
+    <color name="white">#FFFFFF</color>
+    <color name="whiteF">#00FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="red">#FF0000</color>
+    <color name="gray1">#999999</color>
+    <color name="blue">#0099FF</color>
+    <color name="bluedate">#31BD80</color>
+    <color name="blue1">#0000FF</color>
+    <color name="yello">#FF6600</color>
+    
+    <color name="title_bg">#01ABF6</color>
+
+    <color name="text_color_black">#ff1e1e1e</color>
+    <color name="text_color_blue">#ff0179dc</color>
+    
+    <color name="transparent">#00000000</color>
+	<color name="x_bg_color">#F6F5F1</color>
+	<color name="gray">#E6E6E6</color>
+	
+	<color name="lingthblue">#EAF5F9</color>
+	
+	<color name="blue_liseten">#30BD81</color>
+	<color name="yellow_liseten">#FFB751</color>
+	<color name="building_title">#31BFFF</color>
+	<color name="floor_selected">#20A8E4</color>
+	<color name="room_item_double">#FDAF42</color>
+	<color name="room_item_single">#31BFFF</color>
+	
+	<color name="unselected_blue">#5ACCFF</color>
+	<color name="selected_blue">#01ABF6</color>
+	<color name="text_color">#3EAFE7</color>
+	
+	<color name="rb_class_unchecked">#F9F9F9</color>
+	<color name="rb_class_checked">#FFC066</color>
+	<color name="gray_bg">#F3F3F3</color>
+	   <color name="text_color_green_45B035">#45B035</color>
+
+	<color name="fragment_bg">#77557799</color>
+	 <color name="text_color_grey">#ff999999</color>
+	
+	
+	
+</resources>
