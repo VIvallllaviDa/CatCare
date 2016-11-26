@@ -10,9 +10,7 @@
 
 package com.daniulive.smartplayer;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +20,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -67,10 +64,10 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 
 	private int currentOrigentation = PORTRAIT;
 	private boolean isPlaybackViewStarted = false;
-	private String playbackUrl = null;
+	private String playbackUrl = "rtmp://daniulive.com:1935/hls/streamt4";
 
     private Button button_pause;
-	Button btnPopInputText;
+	//Button btnPopInputText;
 	Button btnStartStopPlayback;
 
 
@@ -104,6 +101,8 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
                 //Sending socket here...
 				//发送4给server
 				play_mode = 4;
+				SettingActivity.strMessage = String.valueOf(play_mode)+ ":0:0";
+				new Thread(SettingActivity.sendThread).start();
 
                 rfaBtn.setVisibility(View.VISIBLE);
                 rfaBtn.setEnabled(true);
@@ -163,8 +162,6 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 
         libPlayer = new SmartPlayerJni();
 
-
-
         myContext = this.getApplicationContext();
 
         boolean bViewCreated = CreateView();
@@ -172,7 +169,6 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
         if(bViewCreated){
             inflateLayout(LinearLayout.VERTICAL);
         }
-
 
 	}
 
@@ -224,35 +220,35 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
      * inputID: 123456 
      * playbackUrl: rtmp://daniulive.com:1935/hls/stream123456
      * */
-	private void GenerateURL(String id){
-		if(id == null)
-			return;
-
-		btnStartStopPlayback.setEnabled(true);
-		String baseURL = "rtmp://daniulive.com:1935/hls/stream";
-
-		playbackUrl = baseURL + id;
-	}
+//	private void GenerateURL(String id){
+//		if(id == null)
+//			return;
+//
+//		btnStartStopPlayback.setEnabled(true);
+//		String baseURL = "rtmp://daniulive.com:1935/hls/streamt4";
+//
+//		playbackUrl = baseURL + id;
+//	}
 
 
 
 	/* Popup InputID dialog */
-	private void PopDialog(){
-		final EditText inputID = new EditText(this);
-		inputID.setFocusable(true);
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("如 rtmp://daniulive.com:1935/hls/stream123456,请输入123456").setView(inputID).setNegativeButton(
-				"取消", null);
-		builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-
-			public void onClick(DialogInterface dialog, int which) {
-				String strID = inputID.getText().toString();
-				GenerateURL(strID);
-			}
-		});
-		builder.show();
-	}
+//	private void PopDialog(){
+//		final EditText inputID = new EditText(this);
+//		inputID.setFocusable(true);
+//
+//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//		builder.setTitle("如 rtmp://daniulive.com:1935/hls/stream123456,请输入123456").setView(inputID).setNegativeButton(
+//				"取消", null);
+//		builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+//
+//			public void onClick(DialogInterface dialog, int which) {
+//				String strID = inputID.getText().toString();
+//				GenerateURL(strID);
+//			}
+//		});
+//		builder.show();
+//	}
 
 
 	/* Generate basic layout */
@@ -284,16 +280,16 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 		lLinearLayout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
         /* PopInput button */
-		btnPopInputText = new Button(this);
-		btnPopInputText.setText("输入urlID");
-		btnPopInputText.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		lLinearLayout.addView(btnPopInputText, 0);
+//		btnPopInputText = new Button(this);
+//		btnPopInputText.setText("输入urlID");
+//		btnPopInputText.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+//		lLinearLayout.addView(btnPopInputText, 0);
 
         /* Start playback stream button */
 		btnStartStopPlayback = new Button(this);
 		btnStartStopPlayback.setText("开始播放 ");
 		btnStartStopPlayback.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		lLinearLayout.addView(btnStartStopPlayback, 1);
+		lLinearLayout.addView(btnStartStopPlayback, 0);
 
 
 		outLinearLayout.addView(lLinearLayout, 0);
@@ -303,29 +299,29 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 
 		if(isPlaybackViewStarted)
 		{
-			btnPopInputText.setEnabled(false);
+			//btnPopInputText.setEnabled(false);
 			//btnPopInputUrl.setEnabled(false);
 			btnStartStopPlayback.setText("停止播放 ");
 		}
 		else
 		{
-			btnPopInputText.setEnabled(true);
+			//btnPopInputText.setEnabled(true);
 			//btnPopInputUrl.setEnabled(true);
 			btnStartStopPlayback.setText("开始播放 ");
 		}
         
         /* PopInput button listener */
-		btnPopInputText.setOnClickListener(new Button.OnClickListener() {
-
-			//  @Override
-			public void onClick(View v) {
-				Log.i(TAG, "Run into input playback ID++");
-
-				PopDialog();
-
-				Log.i(TAG, "Run out from input playback ID--");
-			}
-		});
+//		btnPopInputText.setOnClickListener(new Button.OnClickListener() {
+//
+//			//  @Override
+//			public void onClick(View v) {
+//				Log.i(TAG, "Run into input playback ID++");
+//
+//				PopDialog();
+//
+//				Log.i(TAG, "Run out from input playback ID--");
+//			}
+//		});
 
 
 
@@ -335,11 +331,10 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 			//  @Override
 			public void onClick(View v) {
 
-				if(isPlaybackViewStarted)
-				{
+				if(isPlaybackViewStarted) {
 					Log.i(TAG, "Stop playback stream++");
 					btnStartStopPlayback.setText("开始播放 ");
-					btnPopInputText.setEnabled(true);
+					//btnPopInputText.setEnabled(true);
 					//btnPopInputUrl.setEnabled(true);
 					libPlayer.SmartPlayerClose(playerHandle);
 					playerHandle = 0;
@@ -387,7 +382,7 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 					}
 
 					btnStartStopPlayback.setText("停止播放 ");
-					btnPopInputText.setEnabled(false);
+					//btnPopInputText.setEnabled(false);
 					isPlaybackViewStarted = true;
 					Log.i(TAG, "Start playback stream--");
 				}
@@ -575,6 +570,10 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 	protected  void onDestroy()
 	{
 		Log.i(TAG, "Run into activity destory++");
+
+		play_mode = 0;
+		SettingActivity.strMessage = String.valueOf(play_mode)+ ":0:0";
+		new Thread(SettingActivity.sendThread).start();
 
 		if(playerHandle!=0)
 		{
