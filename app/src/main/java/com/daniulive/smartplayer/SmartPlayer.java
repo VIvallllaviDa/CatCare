@@ -13,10 +13,11 @@ package com.daniulive.smartplayer;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -42,7 +43,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AILayout(R.layout.smartplayer_activity)
-public class SmartPlayer extends AIActionBarActivity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
+public class SmartPlayer extends AIActionBarActivity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener,GestureDetector.OnGestureListener{
+
+	private  GestureDetector detector;
+
+	//0表示关闭投影仪
+	//1表示第1种方式（老鼠）进行玩耍
+	//2表示以第2种方式（鱼）进行玩耍
+	//3表示以第3种方式（毛线球）进行玩耍
+	//4表示仅仅打开kincet的投影，投影空白或者不动的鱼
+	//20表示切换到手动，需要提供后面两个数据作为坐标（百分比）
+	int play_mode = 0;
 
 	private SurfaceView sSurfaceView = null;
 
@@ -55,28 +66,22 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 	private SmartPlayerJni libPlayer = null;
 
 	private int currentOrigentation = PORTRAIT;
-
 	private boolean isPlaybackViewStarted = false;
-
 	private String playbackUrl = null;
 
     private Button button_pause;
-
 	Button btnPopInputText;
-	//Button btnPopInputUrl;
 	Button btnStartStopPlayback;
 
 
 	LinearLayout lLayout = null;
 	FrameLayout fFrameLayout = null;
-
 	private Context myContext;
 
     @AIView(R.id.activity_video_rfal)
     private RapidFloatingActionLayout rfaLayout;
     @AIView(R.id.activity_video_rfab)
     private RapidFloatingActionButton rfaBtn;
-
     private RapidFloatingActionHelper rfabHelper;
 
 	static {
@@ -88,6 +93,7 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 
         //setContentView(R.layout.smartplayer_activity);
 
+		detector = new GestureDetector(this, this);
 
         button_pause = (Button)findViewById(R.id.button_pause);
         button_pause.setVisibility(View.GONE);
@@ -96,6 +102,8 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
             @Override
             public void onClick(View v) {
                 //Sending socket here...
+				//发送4给server
+				play_mode = 4;
 
                 rfaBtn.setVisibility(View.VISIBLE);
                 rfaBtn.setEnabled(true);
@@ -169,16 +177,30 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 	}
 
     private void setPlaying(int position) {
+
         if (position < 3) {
             button_pause.setVisibility(View.VISIBLE);
             rfabHelper.toggleContent();
             rfaBtn.setVisibility(View.GONE);
             rfaBtn.setEnabled(false);
             // sending socket here...
-
+			if (position == 0){
+				play_mode = 1;
+			} else if (position == 1){
+				play_mode = 2;
+			} else if (position == 2){
+				play_mode = 3;
+			}
+			SettingActivity.strMessage = String.valueOf(play_mode)+ ":0:0";
+			new Thread(SettingActivity.sendThread).start();
         } else {
-            Intent intent = new Intent(SmartPlayer.this,GuestureActivity.class);
-            startActivity(intent);
+            //Intent intent = new Intent(SmartPlayer.this,GuestureActivity.class);
+            //startActivity(intent);
+			button_pause.setVisibility(View.VISIBLE);
+			rfabHelper.toggleContent();
+			rfaBtn.setVisibility(View.GONE);
+			rfaBtn.setEnabled(false);
+			play_mode = 20;
         }
     }
 
@@ -261,18 +283,11 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 		lLinearLayout.setOrientation(LinearLayout.VERTICAL);
 		lLinearLayout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
-
-        
         /* PopInput button */
 		btnPopInputText = new Button(this);
 		btnPopInputText.setText("输入urlID");
 		btnPopInputText.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		lLinearLayout.addView(btnPopInputText, 0);
-
-		/*btnPopInputUrl = new Button(this);
-		btnPopInputUrl.setText("输入完整url");
-		btnPopInputUrl.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		lLinearLayout.addView(btnPopInputUrl, 1);*/
 
         /* Start playback stream button */
 		btnStartStopPlayback = new Button(this);
@@ -358,15 +373,6 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
                     //静音
                     libPlayer.SmartPlayerSetMute(playerHandle,1);
 
-					//It only used when playback RTSP stream..
-					// libPlayer.SmartPlayerSetRTSPTcpMode(playerHandle, 1);
-
-					//playbackUrl = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
-
-					//playbackUrl = "rtsp://218.204.223.237:554/live/1/67A7572844E51A64/f68g2mj7wjua3la7";
-
-					//playbackUrl = "rtsp://rtsp-v3-spbtv.msk.spbtv.com/spbtv_v3_1/214_110.sdp";
-
 					if(playbackUrl == null){
 						Log.e(TAG, "playback URL with NULL...");
 						return;
@@ -382,7 +388,6 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 
 					btnStartStopPlayback.setText("停止播放 ");
 					btnPopInputText.setEnabled(false);
-					//btnPopInputUrl.setEnabled(false);
 					isPlaybackViewStarted = true;
 					Log.i(TAG, "Start playback stream--");
 				}
@@ -422,6 +427,84 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 			}
 		}
 	}
+
+	//增加直接在直播时手势识别的系统
+	//下面实现的这些接口负责处理所有在该Activity上发生的触碰屏幕相关的事件
+	@Override
+	public boolean onTouchEvent(MotionEvent e)
+	{
+		if(play_mode != 20)
+			return false;
+		return detector.onTouchEvent(e);
+	}
+
+
+
+	private String getActionName(int action) {
+		String name = "";
+		switch (action) {
+			case MotionEvent.ACTION_DOWN: {
+				name = "ACTION_DOWN";
+				break;
+			}
+			case MotionEvent.ACTION_MOVE: {
+				name = "ACTION_MOVE";
+				break;
+			}
+			case MotionEvent.ACTION_UP: {
+				name = "ACTION_UP";
+				break;
+			}
+			default:
+				break;
+		}
+		return name;
+	}
+
+
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent e) {
+		Log.i(getClass().getName(), "onSingleTapUp-----" + getActionName(e.getAction()));
+		return false;
+	}
+
+	@Override
+	public void onLongPress(MotionEvent e) {
+		Log.i(getClass().getName(), "onLongPress-----" + getActionName(e.getAction()));
+	}
+
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+		SettingActivity.strMessage ="20:"+ e2.getX() + ":" + e2.getY() + "   \n";
+		new Thread(SettingActivity.sendThread).start();
+		Log.i(getClass().getName(),
+				"onScroll-----" + getActionName(e2.getAction()) + ",(" + e1.getX() + "," + e1.getY() + ") ,("
+						+ e2.getX() + "," + e2.getY() + ")");
+		return false;
+	}
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+		//SettingActivity.strMessage = "hello spt\n";
+		//new Thread(SettingActivity.sendThread).start();
+		Log.i(getClass().getName(),
+				"onFling-----" + getActionName(e2.getAction()) + ",(" + e1.getX() + "," + e1.getY() + ") ,("
+						+ e2.getX() + "," + e2.getY() + ")");
+		return false;
+	}
+
+	@Override
+	public void onShowPress(MotionEvent e) {
+		Log.i(getClass().getName(), "onShowPress-----" + getActionName(e.getAction()));
+	}
+
+	@Override
+	public boolean onDown(MotionEvent e) {
+		Log.i(getClass().getName(), "onDown-----" + getActionName(e.getAction()));
+		return false;
+	}
+
 
 	/* Create rendering */
 	private boolean CreateView() {
