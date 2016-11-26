@@ -11,6 +11,7 @@
 package com.daniulive.smartplayer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -24,7 +25,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.eventhandle.SmartEventCallback;
 import com.videoengine.NTRenderer;
@@ -95,7 +95,8 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		w_screen = dm.widthPixels;
 		h_screen = dm.heightPixels;
-		Toast.makeText(SmartPlayer.this, "Get the size of screen with"+w_screen+" "+h_screen, Toast.LENGTH_SHORT).show();
+
+		//Toast.makeText(SmartPlayer.this, "Get the size of screen with"+w_screen+" "+h_screen, Toast.LENGTH_SHORT).show();
         //setContentView(R.layout.smartplayer_activity);
 
 		detector = new GestureDetector(this, this);
@@ -153,6 +154,14 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
                 .setLabelColor(0xff652b14)
                 .setWrapper(3)
         );
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("Play it!!!")
+                .setResId(R.drawable.shoudong)
+                .setIconNormalColor(0xff7cb388)
+                .setIconPressedColor(0xffbf360c)
+                .setLabelColor(0xff652b14)
+                .setWrapper(4)
+        );
         rfaContent
                 .setItems(items)
                 .setIconShadowRadius(ABTextUtil.dip2px(context, 5))
@@ -197,9 +206,10 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 			}
 			SettingActivity.strMessage = String.valueOf(play_mode)+ ":0:0";
 			new Thread(SettingActivity.sendThread).start();
+        } else if (position == 3) {
+            Intent intent = new Intent(SmartPlayer.this,GuestureActivity.class);
+            startActivity(intent);
         } else {
-            //Intent intent = new Intent(SmartPlayer.this,GuestureActivity.class);
-            //startActivity(intent);
 			button_pause.setVisibility(View.VISIBLE);
 			rfabHelper.toggleContent();
 			rfaBtn.setVisibility(View.GONE);

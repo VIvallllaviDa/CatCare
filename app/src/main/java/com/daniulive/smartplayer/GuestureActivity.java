@@ -3,6 +3,7 @@ package com.daniulive.smartplayer;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -19,6 +20,9 @@ public class GuestureActivity extends Activity {
 
     private static int isRunning = 0;
 
+    static int w_screen = 0;
+    static int h_screen = 0;
+
 
     private static Handler handler = new Handler() {
 
@@ -28,8 +32,11 @@ public class GuestureActivity extends Activity {
 
             System.out.println("Handle message x: " + catX.toString() + " y: " + catY.toString());
 
+            int x = catX * w_screen / 100;
+            int y = catY * h_screen / 100;
+
             MarginLayoutParams margin = new MarginLayoutParams(iv_cat.getLayoutParams());
-            margin.setMargins(catX, catY, catX + margin.width, catY + margin.height);
+            margin.setMargins(x, y, x + margin.width, y + margin.height);
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(margin);
             iv_cat.setLayoutParams(layoutParams);
         };
@@ -44,6 +51,10 @@ public class GuestureActivity extends Activity {
         iv_cat = (ImageView)findViewById(R.id.cat_icon);
 
         isRunning = 1;
+
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        w_screen = dm.widthPixels;
+        h_screen = dm.heightPixels;
 
     }
 
