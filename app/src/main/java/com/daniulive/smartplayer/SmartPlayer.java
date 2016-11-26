@@ -10,7 +10,6 @@
 
 package com.daniulive.smartplayer;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,11 +24,25 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.eventhandle.SmartEventCallback;
 import com.videoengine.NTRenderer;
+import com.wangjie.androidbucket.utils.ABTextUtil;
+import com.wangjie.androidinject.annotation.annotations.base.AILayout;
+import com.wangjie.androidinject.annotation.annotations.base.AIView;
+import com.wangjie.androidinject.annotation.present.AIActionBarActivity;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
+import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem;
+import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList;
 
-public class SmartPlayer extends Activity {
+import java.util.ArrayList;
+import java.util.List;
+
+@AILayout(R.layout.smartplayer_activity)
+public class SmartPlayer extends AIActionBarActivity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
 
 	private SurfaceView sSurfaceView = null;
 
@@ -57,6 +70,13 @@ public class SmartPlayer extends Activity {
 
 	private Context myContext;
 
+    @AIView(R.id.activity_video_rfal)
+    private RapidFloatingActionLayout rfaLayout;
+    @AIView(R.id.activity_video_rfab)
+    private RapidFloatingActionButton rfaBtn;
+
+    private RapidFloatingActionHelper rfabHelper;
+
 	static {
 		System.loadLibrary("SmartPlayer");
 	}
@@ -64,20 +84,92 @@ public class SmartPlayer extends Activity {
 	@Override protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 
-		Log.i(TAG, "Run into OnCreate++");
+        //setContentView(R.layout.smartplayer_activity);
 
-		libPlayer = new SmartPlayerJni();
+        RapidFloatingActionContentLabelList rfaContent = new RapidFloatingActionContentLabelList(context);
+        rfaContent.setOnRapidFloatingActionContentLabelListListener(this);
+        List<RFACLabelItem> items = new ArrayList<>();
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("Ball")
+                .setResId(R.drawable.maoxianqiu)
+                .setIconNormalColor(0xff7cb388)
+                .setIconPressedColor(0xffbf360c)
+                .setLabelColor(0xff652b14)
+                .setWrapper(0)
+        );
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("Fish")
+                .setResId(R.drawable.yu)
+                .setIconNormalColor(0xff7cb388)
+                .setIconPressedColor(0xffbf360c)
+                .setLabelColor(0xff652b14)
+                .setWrapper(1)
+        );
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("Mouse")
+                .setResId(R.drawable.laoshu)
+                .setIconNormalColor(0xff7cb388)
+                .setIconPressedColor(0xffbf360c)
+                .setLabelColor(0xff652b14)
+                .setWrapper(2)
+        );
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("Play")
+                .setResId(R.drawable.shoudong)
+                .setIconNormalColor(0xff7cb388)
+                .setIconPressedColor(0xffbf360c)
+                .setLabelColor(0xff652b14)
+                .setWrapper(3)
+        );
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("Pause")
+                .setResId(R.drawable.zanting)
+                .setIconNormalColor(0xff7cb388)
+                .setIconPressedColor(0xffbf360c)
+                .setLabelColor(0xff652b14)
+                .setWrapper(3)
+        );
+        rfaContent
+                .setItems(items)
+                .setIconShadowRadius(ABTextUtil.dip2px(context, 5))
+                .setIconShadowColor(0xff888888)
+                .setIconShadowDy(ABTextUtil.dip2px(context, 5))
+        ;
+        rfabHelper = new RapidFloatingActionHelper(
+                context,
+                rfaLayout,
+                rfaBtn,
+                rfaContent
+        ).build();
+
+        Log.i(TAG, "Run into OnCreate++");
+
+        libPlayer = new SmartPlayerJni();
 
 
 
-		myContext = this.getApplicationContext();
+        myContext = this.getApplicationContext();
 
-		boolean bViewCreated = CreateView();
+        boolean bViewCreated = CreateView();
 
-		if(bViewCreated){
-			inflateLayout(LinearLayout.VERTICAL);
-		}
+        if(bViewCreated){
+            inflateLayout(LinearLayout.VERTICAL);
+        }
+
+
 	}
+
+    @Override
+    public void onRFACItemLabelClick(int position, RFACLabelItem item) {
+        Toast.makeText(getContext(), "clicked label: " + position, Toast.LENGTH_SHORT).show();
+        rfabHelper.toggleContent();
+    }
+
+    @Override
+    public void onRFACItemIconClick(int position, RFACLabelItem item) {
+        Toast.makeText(getContext(), "clicked icon: " + position, Toast.LENGTH_SHORT).show();
+        rfabHelper.toggleContent();
+    }
 
 	/* For smartplayer demo app, the url is based on: baseURL + inputID
      * For example: 
@@ -121,10 +213,11 @@ public class SmartPlayer extends Activity {
 		if (null == lLayout)
 			lLayout = new LinearLayout(this);
 
-		addContentView(lLayout,  new android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-				android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
+//		addContentView(lLayout,  new android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+//				android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
 
-		lLayout.setOrientation(orientation);
+
+        lLayout.setOrientation(orientation);
 
 		fFrameLayout = new FrameLayout(this);
 
@@ -166,7 +259,7 @@ public class SmartPlayer extends Activity {
 		outLinearLayout.addView(lLinearLayout, 0);
 		fFrameLayout.addView(outLinearLayout, 1);
 
-		lLayout.addView(fFrameLayout, 0);
+        rfaLayout.addView(fFrameLayout, 0);
 
 		if(isPlaybackViewStarted)
 		{
