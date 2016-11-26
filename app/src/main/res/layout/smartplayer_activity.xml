@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     tools:context="com.daniulive.smartplayer.SmartPlayer" >
 
+    <Button
+        android:id="@+id/button_pause"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/zanting"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
     <com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
         xmlns:rfal="http://schemas.android.com/apk/res-auto"
@@ -32,6 +39,7 @@
             rfab:rfab_shadow_dx="0dp"
             rfab:rfab_shadow_dy="5dp"
             />
+
     </com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout>
 
 </RelativeLayout>

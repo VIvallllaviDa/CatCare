@@ -24,7 +24,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.eventhandle.SmartEventCallback;
 import com.videoengine.NTRenderer;
@@ -60,6 +59,8 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 
 	private String playbackUrl = null;
 
+    private Button button_pause;
+
 	Button btnPopInputText;
 	//Button btnPopInputUrl;
 	Button btnStartStopPlayback;
@@ -85,6 +86,21 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 		super.onCreate(icicle);
 
         //setContentView(R.layout.smartplayer_activity);
+
+
+        button_pause = (Button)findViewById(R.id.button_pause);
+        button_pause.setVisibility(View.GONE);
+
+        button_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Sending socket here...
+
+                rfaBtn.setVisibility(View.VISIBLE);
+                rfaBtn.setEnabled(true);
+                button_pause.setVisibility(View.GONE);
+            }
+        });
 
         RapidFloatingActionContentLabelList rfaContent = new RapidFloatingActionContentLabelList(context);
         rfaContent.setOnRapidFloatingActionContentLabelListListener(this);
@@ -121,14 +137,6 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
                 .setLabelColor(0xff652b14)
                 .setWrapper(3)
         );
-        items.add(new RFACLabelItem<Integer>()
-                .setLabel("Pause")
-                .setResId(R.drawable.zanting)
-                .setIconNormalColor(0xff7cb388)
-                .setIconPressedColor(0xffbf360c)
-                .setLabelColor(0xff652b14)
-                .setWrapper(3)
-        );
         rfaContent
                 .setItems(items)
                 .setIconShadowRadius(ABTextUtil.dip2px(context, 5))
@@ -159,16 +167,29 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 
 	}
 
+    private void setPlaying(int position) {
+        if (position < 3) {
+            button_pause.setVisibility(View.VISIBLE);
+            rfabHelper.toggleContent();
+            rfaBtn.setVisibility(View.GONE);
+            rfaBtn.setEnabled(false);
+            // sending socket here...
+
+        }
+    }
+
     @Override
     public void onRFACItemLabelClick(int position, RFACLabelItem item) {
-        Toast.makeText(getContext(), "clicked label: " + position, Toast.LENGTH_SHORT).show();
-        rfabHelper.toggleContent();
+//        Toast.makeText(getContext(), "clicked label: " + position, Toast.LENGTH_SHORT).show();
+//        rfabHelper.toggleContent();
+        setPlaying(position);
     }
 
     @Override
     public void onRFACItemIconClick(int position, RFACLabelItem item) {
-        Toast.makeText(getContext(), "clicked icon: " + position, Toast.LENGTH_SHORT).show();
-        rfabHelper.toggleContent();
+//        Toast.makeText(getContext(), "clicked icon: " + position, Toast.LENGTH_SHORT).show();
+//        rfabHelper.toggleContent();
+        setPlaying(position);
     }
 
 	/* For smartplayer demo app, the url is based on: baseURL + inputID
