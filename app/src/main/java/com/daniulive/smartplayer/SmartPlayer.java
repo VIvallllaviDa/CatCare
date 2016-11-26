@@ -381,7 +381,7 @@ public class SmartPlayer extends Activity {
 			playerHandle = 0;
 		}
 		super.onDestroy();
-		finish();
-		System.exit(0);
+		//finish();
+		//System.exit(0);
 	}
 }
