@@ -5,48 +5,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.rongc.helloworld.MainActivity"
-    android:background="@drawable/background"
+    android:background="@drawable/bg"
     >
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/linearLayout2">
-
-    </LinearLayout>
-
     <Button
-        android:id="@+id/button_care"
-        android:layout_width="80dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="44dp"
-        android:layout_alignParentBottom="true"
+        android:id="@+id/button_setting"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/setting"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/care"
-        />
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp" />
 
     <Button
         android:id="@+id/button_watch"
         android:layout_width="80dp"
         android:layout_height="100dp"
-        android:layout_marginStart="44dp"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/linearLayout2"
         android:background="@drawable/watch"
-        />
+        android:layout_marginLeft="72dp"
+        android:layout_marginStart="72dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
-        android:id="@+id/button_setting"
+        android:id="@+id/button_care"
         android:layout_width="80dp"
         android:layout_height="100dp"
-        android:layout_marginStart="44dp"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/watch"
-        />
+        android:background="@drawable/care"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/button_setting"
+        android:layout_toStartOf="@+id/button_setting"
+        android:layout_marginRight="13dp"
+        android:layout_marginEnd="13dp" />
 
 </RelativeLayout>
