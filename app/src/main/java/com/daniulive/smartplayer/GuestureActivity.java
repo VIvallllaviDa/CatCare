@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -11,8 +13,11 @@ import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-public class GuestureActivity extends Activity {
 
+public class GuestureActivity extends Activity implements GestureDetector.OnGestureListener {
+
+    private  GestureDetector detector;
+    int play_mode = 20;
 
     private static ImageView iv_cat;
     private static Integer catX;
@@ -56,71 +61,103 @@ public class GuestureActivity extends Activity {
         w_screen = dm.widthPixels;
         h_screen = dm.heightPixels;
 
+        detector = new GestureDetector(this, this);
     }
 
     public static void updating_view(Integer x, Integer y) {
         if (0 == isRunning) {
             return;
         }
-
         catX = x;
         catY = y;
-
-//        Integer h = iv_cat.getHeight();
-//        Integer w = iv_cat.getWidth();
-
         System.out.println("updating_view x: " + catX.toString() + " y: " + catY.toString());
-
         handler.sendEmptyMessage(0);
-
     }
 
 
-    private View.OnTouchListener touch = new OnTouchListener() {
-        // 定义手指开始触摸的坐标
-        float startX;
-        float startY;
+    //增加直接在直播时手势识别的系统
+    //下面实现的这些接口负责处理所有在该Activity上发生的触碰屏幕相关的事件
+    @Override
+    public boolean onTouchEvent(MotionEvent e)
+    {
+        if(play_mode != 20)
+            return false;
+        return detector.onTouchEvent(e);
+    }
 
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                // 用户按下动作
-                case MotionEvent.ACTION_DOWN:
-//                    parms = (RelativeLayout.LayoutParams) iv_move.getLayoutParams();
-//                    par = (LinearLayout.LayoutParams) getWindow().findViewById(Window.ID_ANDROID_CONTENT).getLayoutParams();
-//                    dx = event.getRawX() - parms.leftMargin;
-//                    dy = event.getRawY() - parms.topMargin;
 
-                    break;
-                // 用户手指在屏幕上移动的动作
-                case MotionEvent.ACTION_MOVE:
-                    // 记录移动位置的点的坐标
-                    float stopX = event.getX();
-                    float stopY = event.getY();
-                    SettingActivity.strMessage ="20:"+ stopX + ":" + stopY + "   \n";
-                    new Thread(SettingActivity.sendThread).start();
 
-//                    x = event.getRawX();
-//                    y = event.getRawY();
-//                    parms.leftMargin = (int) (x-dx);
-//                    parms.topMargin = (int) (y - dy);
-//                    iv_move.setLayoutParams(parms);
-
-                    break;
-                case MotionEvent.ACTION_UP:
-
-                    break;
-                default:
-                    break;
+    private String getActionName(int action) {
+        String name = "";
+        switch (action) {
+            case MotionEvent.ACTION_DOWN: {
+                name = "ACTION_DOWN";
+                break;
             }
-            return true;
+            case MotionEvent.ACTION_MOVE: {
+                name = "ACTION_MOVE";
+                break;
+            }
+            case MotionEvent.ACTION_UP: {
+                name = "ACTION_UP";
+                break;
+            }
+            default:
+                break;
         }
-    };
+        return name;
+    }
+
+
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        Log.i(getClass().getName(), "onSingleTapUp-----" + getActionName(e.getAction()));
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+        Log.i(getClass().getName(), "onLongPress-----" + getActionName(e.getAction()));
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        float x =  e2.getX()/w_screen*100;
+        float y =  e2.getY()/h_screen*100;
+        //Toast.makeText(SmartPlayer.this, "Get e2 "+e2.getX()+" "+e2.getY(), Toast.LENGTH_SHORT).show();
+        SettingActivity.strMessage ="20:"+ x + ":" + y ;
+        new Thread(SettingActivity.sendThread).start();
+        return false;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        Log.i(getClass().getName(),
+                "onFling-----" + getActionName(e2.getAction()) + ",(" + e1.getX() + "," + e1.getY() + ") ,("
+                        + e2.getX() + "," + e2.getY() + ")");
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+        Log.i(getClass().getName(), "onShowPress-----" + getActionName(e.getAction()));
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        Log.i(getClass().getName(), "onDown-----" + getActionName(e.getAction()));
+        return false;
+    }
 
     @Override
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
+
+        play_mode = 0;
+        SettingActivity.strMessage = String.valueOf(play_mode)+ ":0:0";
+        new Thread(SettingActivity.sendThread).start();
 
         isRunning = 0;
 
