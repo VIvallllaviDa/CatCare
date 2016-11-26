@@ -26,7 +26,7 @@ public class SettingActivity extends Activity {
     private Button btnConnect = null;
     private Button btnSend = null;
     private Button buttonJump = null;
-    private static  String ServerIP = "10.106.88.63";
+    private static  String ServerIP = "192.168.11.226";
     private static final int ServerPort = 4567;
     private static Socket socket = null;
     public static String strMessage;
@@ -180,7 +180,8 @@ public class SettingActivity extends Activity {
                     if ( parts[0].equals("30") ) {
                         catX = Float.parseFloat(parts[1]);
                         catY = Float.parseFloat(parts[2]);
-                        System.out.println("Get string " + parts[1] +":"+parts[2] );
+                        //System.out.println("Get string " + parts[1] +":"+parts[2] );
+                        GuestureActivity.updating_view(catX, catY);
                     }
                 } catch (UnsupportedEncodingException e) {
                     // TODO Auto-generated catch block
@@ -206,10 +207,10 @@ public class SettingActivity extends Activity {
         // TODO Auto-generated method stub
         super.onDestroy();
 
-        if(receiveThread != null){
-            isReceive = false;
-            receiveThread.interrupt();
-        }
+//        if(receiveThread != null){
+//            isReceive = false;
+//            receiveThread.interrupt();
+//        }
     }
 
 }

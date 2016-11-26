@@ -13,6 +13,7 @@ package com.daniulive.smartplayer;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -175,6 +176,9 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
             rfaBtn.setEnabled(false);
             // sending socket here...
 
+        } else {
+            Intent intent = new Intent(SmartPlayer.this,GuestureActivity.class);
+            startActivity(intent);
         }
     }
 

@@ -33,6 +33,8 @@ public class GuestureActivity extends Activity {
     private Canvas canvas;
     private Paint paint;
 
+    private static int isRunning = 0;
+
     Context mContext = GuestureActivity.this;
 
 
@@ -53,6 +55,8 @@ public class GuestureActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guesture);
+
+        isRunning = 1;
 
         res = mContext.getResources();
        // bmpDraw =(BitmapDrawable)res.getDrawable(R.drawable.liangban);
@@ -85,6 +89,13 @@ public class GuestureActivity extends Activity {
             }
         });
 
+    }
+
+    public static void updating_view(Float catX, Float catY) {
+        if (0 == isRunning) {
+            return;
+        }
+        System.out.println("Find with x: " + catX.toString() + " y: " + catY.toString());
     }
 
 
@@ -128,6 +139,15 @@ public class GuestureActivity extends Activity {
             return true;
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+
+        isRunning = 0;
+
+    }
 
 
 

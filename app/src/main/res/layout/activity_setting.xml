@@ -46,7 +46,7 @@
         android:layout_alignRight="@+id/textViewServerIP"
         android:layout_below="@+id/textViewServerIP"
         android:layout_marginTop="44dp"
-        android:text="10.106.88.60"
+        android:text="192.168.11.226"
         android:ems="10" >
 
         <requestFocus />
