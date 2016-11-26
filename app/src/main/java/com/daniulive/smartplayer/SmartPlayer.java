@@ -13,6 +13,7 @@ package com.daniulive.smartplayer;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -23,6 +24,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.eventhandle.SmartEventCallback;
 import com.videoengine.NTRenderer;
@@ -51,6 +53,8 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 	//4表示仅仅打开kincet的投影，投影空白或者不动的鱼
 	//20表示切换到手动，需要提供后面两个数据作为坐标（百分比）
 	int play_mode = 0;
+	int w_screen = 0;
+	int h_screen = 0;
 
 	private SurfaceView sSurfaceView = null;
 
@@ -88,6 +92,10 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 	@Override protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 
+		DisplayMetrics dm = getResources().getDisplayMetrics();
+		w_screen = dm.widthPixels;
+		h_screen = dm.heightPixels;
+		Toast.makeText(SmartPlayer.this, "Get the size of screen with"+w_screen+" "+h_screen, Toast.LENGTH_SHORT).show();
         //setContentView(R.layout.smartplayer_activity);
 
 		detector = new GestureDetector(this, this);
@@ -279,11 +287,6 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 		lLinearLayout.setOrientation(LinearLayout.VERTICAL);
 		lLinearLayout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
-        /* PopInput button */
-//		btnPopInputText = new Button(this);
-//		btnPopInputText.setText("输入urlID");
-//		btnPopInputText.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-//		lLinearLayout.addView(btnPopInputText, 0);
 
         /* Start playback stream button */
 		btnStartStopPlayback = new Button(this);
@@ -334,8 +337,6 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 				if(isPlaybackViewStarted) {
 					Log.i(TAG, "Stop playback stream++");
 					btnStartStopPlayback.setText("开始播放 ");
-					//btnPopInputText.setEnabled(true);
-					//btnPopInputUrl.setEnabled(true);
 					libPlayer.SmartPlayerClose(playerHandle);
 					playerHandle = 0;
 					isPlaybackViewStarted = false;
@@ -471,7 +472,10 @@ public class SmartPlayer extends AIActionBarActivity implements RapidFloatingAct
 
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-		SettingActivity.strMessage ="20:"+ e2.getX() + ":" + e2.getY() + "   \n";
+		float x =  e2.getX()/w_screen*100;
+		float y =  e2.getY()/h_screen*100;
+		//Toast.makeText(SmartPlayer.this, "Get e2 "+e2.getX()+" "+e2.getY(), Toast.LENGTH_SHORT).show();
+		SettingActivity.strMessage ="20:"+ x + ":" + y ;
 		new Thread(SettingActivity.sendThread).start();
 		Log.i(getClass().getName(),
 				"onScroll-----" + getActionName(e2.getAction()) + ",(" + e1.getX() + "," + e1.getY() + ") ,("
