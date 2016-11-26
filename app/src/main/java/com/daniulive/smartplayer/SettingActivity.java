@@ -36,6 +36,9 @@ public class SettingActivity extends Activity {
     private ReceiveThread receiveThread = null;
     private boolean isReceive = false;
 
+    public float catX = 0;
+    public float catY = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,13 +174,22 @@ public class SettingActivity extends Activity {
                 }
                 try {
                     str = new String(buffer,"UTF-8").trim();
+                    //对接受到的消息进行解析，数据用来更新全局变量 catX catY
+                    String[] parts = str.split(":");
+                    String part0 = parts[0];
+                    if ( parts[0].equals("30") ) {
+                        catX = Float.parseFloat(parts[1]);
+                        catY = Float.parseFloat(parts[2]);
+                        System.out.println("Get string " + parts[1] +":"+parts[2] );
+                    }
                 } catch (UnsupportedEncodingException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                Message msg = new Message();
-                msg.obj = str;
-                myHandler.sendMessage(msg);
+
+                //Message msg = new Message();
+               // msg.obj = str;
+               // myHandler.sendMessage(msg);
             }
         }
     }
