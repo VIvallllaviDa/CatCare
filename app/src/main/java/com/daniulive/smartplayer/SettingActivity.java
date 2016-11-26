@@ -36,8 +36,8 @@ public class SettingActivity extends Activity {
     private ReceiveThread receiveThread = null;
     private boolean isReceive = false;
 
-    public float catX = 0;
-    public float catY = 0;
+    public int catX = 0;
+    public int catY = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,8 +178,8 @@ public class SettingActivity extends Activity {
                     String[] parts = str.split(":");
                     String part0 = parts[0];
                     if ( parts[0].equals("30") ) {
-                        catX = Float.parseFloat(parts[1]);
-                        catY = Float.parseFloat(parts[2]);
+                        catX = Integer.parseInt(parts[1]);
+                        catY = Integer.parseInt(parts[2]);
                         //System.out.println("Get string " + parts[1] +":"+parts[2] );
                         GuestureActivity.updating_view(catX, catY);
                     }
