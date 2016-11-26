@@ -16,4 +16,13 @@
         android:layout_marginTop="79dp"
         />
 
+    <ImageView
+        android:id="@+id/hl_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/liangban"
+        android:layout_marginLeft="143dp"
+        android:layout_marginTop="79dp"
+        />
+
 </RelativeLayout>

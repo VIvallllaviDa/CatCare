@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -27,6 +26,8 @@ public class GuestureActivity extends Activity implements GestureDetector.OnGest
 
     static int w_screen = 0;
     static int h_screen = 0;
+
+    private static ImageView hlview;
 
 
     private static Handler handler = new Handler() {
@@ -62,6 +63,9 @@ public class GuestureActivity extends Activity implements GestureDetector.OnGest
         h_screen = dm.heightPixels;
 
         detector = new GestureDetector(this, this);
+
+        hlview = (ImageView)findViewById(R.id.hl_icon);
+        hlview.setVisibility(View.GONE);
     }
 
     public static void updating_view(Integer x, Integer y) {
@@ -78,11 +82,55 @@ public class GuestureActivity extends Activity implements GestureDetector.OnGest
     //增加直接在直播时手势识别的系统
     //下面实现的这些接口负责处理所有在该Activity上发生的触碰屏幕相关的事件
     @Override
-    public boolean onTouchEvent(MotionEvent e)
+    public boolean onTouchEvent(MotionEvent event)
     {
-        if(play_mode != 20)
-            return false;
-        return detector.onTouchEvent(e);
+//        if(play_mode != 20)
+//            return false;
+//        return detector.onTouchEvent(e);
+
+        int xx = (int)event.getX();
+        int yy = (int)event.getY();
+
+        switch (event.getAction()) {
+            // 用户按下动作
+            case MotionEvent.ACTION_DOWN:
+
+                hlview.setVisibility(View.VISIBLE);
+                MarginLayoutParams margin = new MarginLayoutParams(hlview.getLayoutParams());
+                margin.setMargins(xx, yy, xx + margin.width, yy + margin.height);
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(margin);
+                hlview.setLayoutParams(layoutParams);
+
+                break;
+            // 用户手指在屏幕上移动的动作
+            case MotionEvent.ACTION_MOVE:
+                // 记录移动位置的点的坐标
+
+                float x =  event.getX()/w_screen*100;
+                float y =  event.getY()/h_screen*100;
+
+                hlview.setVisibility(View.VISIBLE);
+                margin = new MarginLayoutParams(hlview.getLayoutParams());
+                margin.setMargins(xx, yy, xx + margin.width, yy + margin.height);
+                layoutParams = new RelativeLayout.LayoutParams(margin);
+                hlview.setLayoutParams(layoutParams);
+
+
+
+                SettingActivity.strMessage ="20:"+ x + ":" + y ;
+                new Thread(SettingActivity.sendThread).start();
+
+                break;
+            case MotionEvent.ACTION_UP:
+
+                hlview.setVisibility(View.GONE);
+
+                break;
+            default:
+                break;
+        }
+
+        return detector.onTouchEvent(event);
     }
 
 
@@ -125,6 +173,10 @@ public class GuestureActivity extends Activity implements GestureDetector.OnGest
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         float x =  e2.getX()/w_screen*100;
         float y =  e2.getY()/h_screen*100;
+
+
+
+
         //Toast.makeText(SmartPlayer.this, "Get e2 "+e2.getX()+" "+e2.getY(), Toast.LENGTH_SHORT).show();
         SettingActivity.strMessage ="20:"+ x + ":" + y ;
         new Thread(SettingActivity.sendThread).start();
