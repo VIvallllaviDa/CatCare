@@ -14,8 +14,11 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 public class GuestureActivity extends Activity {
 
@@ -40,15 +43,20 @@ public class GuestureActivity extends Activity {
     Bitmap bmp;
 
     Bitmap bmp1;
-    
+
+    RelativeLayout.LayoutParams parms;
+    LinearLayout.LayoutParams par;
+    float dx=0,dy=0,x=0,y=0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guesture);
 
         res = mContext.getResources();
-        bmpDraw =(BitmapDrawable)res.getDrawable(R.drawable.liangban);
-        bmp = bmpDraw.getBitmap();
+       // bmpDraw =(BitmapDrawable)res.getDrawable(R.drawable.liangban);
+       // bmp = bmpDraw.getBitmap();
         bmp1 = BitmapFactory.decodeResource(res, R.drawable.liangban);
 
         // 初始化一个画笔，笔触宽度为5，颜色为红色
@@ -90,7 +98,10 @@ public class GuestureActivity extends Activity {
             switch (event.getAction()) {
                 // 用户按下动作
                 case MotionEvent.ACTION_DOWN:
-
+                    parms = (RelativeLayout.LayoutParams) iv_move.getLayoutParams();
+                    par = (LinearLayout.LayoutParams) getWindow().findViewById(Window.ID_ANDROID_CONTENT).getLayoutParams();
+                    dx = event.getRawX() - parms.leftMargin;
+                    dy = event.getRawY() - parms.topMargin;
 
                     break;
                 // 用户手指在屏幕上移动的动作
@@ -101,9 +112,11 @@ public class GuestureActivity extends Activity {
                     SettingActivity.strMessage ="20:"+ stopX + ":" + stopY + "   \n";
                     new Thread(SettingActivity.sendThread).start();
 
-                    //iv_move.setX(stopX);
-                    //iv_move.setY(stopY);
-
+                    x = event.getRawX();
+                    y = event.getRawY();
+                    parms.leftMargin = (int) (x-dx);
+                    parms.topMargin = (int) (y - dy);
+                    iv_move.setLayoutParams(parms);
 
                     break;
                 case MotionEvent.ACTION_UP:
